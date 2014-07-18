@@ -22,7 +22,7 @@ setup(
     version="0.1.0",
     license="MIT",
     description="Connect and interface with the OnePageCRM REST API",
-    long_description="%s\n%s" % (read("README.rst"), re.sub(":obj:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst"))),
+    long_description=read("README.rst"),
     author="Ruairi Fahy",
     author_email="ruairi@onepagecrm.com",
     url="https://github.com/onepagecrm/python-client",
