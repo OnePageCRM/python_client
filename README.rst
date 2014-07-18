@@ -53,14 +53,14 @@ Getting data:
     contacts = client.get('contacts', sort_by='modified_at', order='asc')
     
 
-create new resources:
+Create new resources:
 
 .. code-block:: python
 
     contact = client.post('contacts', {'first_name': 'Michael',
                                        'last_name': 'Fitzgerald',
                                        'company_name': 'OnePageCRM'})['contact']
-    contact_id = contact['id']]
+    contact_id = contact['id']
 
     text = 'Had a meeting today in cafe 47 with Michael to discuss new features'
     note = client.post('notes', {'text': text,
