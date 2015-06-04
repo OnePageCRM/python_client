@@ -18,15 +18,15 @@ The first thing to do is to set up your client
 
 .. code-block:: python
 
-    from onepagecrm import OnePageCRM, RequestError, UnknownError
-    client = OnePageCRM.login(username, password)
-    
+    from onepagecrm import OnePageCRMAPI, RequestError, UnknownError
+    client = OnePageCRMAPI.login(username, password)
+
     # If you don't want to store the username and password. After you have a
     # working client you can do the following
     user_id = client.user_id
     api_key = client.api_key
     # Save these for later then to create a client
-    client = OnePageCRM(user_id, api_key)
+    client = OnePageCRMAPI(user_id, api_key)
 
 Once you have your client set up you can start making requests.
 
@@ -35,23 +35,23 @@ Getting data:
 .. code-block:: python
 
     contacts = client.get('contacts')['contacts']
-    
+
     # Limit returned data
     email_addresses = []
     for contact in client.get('contacts', fields='emails', sparse=True)['contacts']:
         emails = contact['contact'].get('emails')
         if emails:
             email_addresses.extend([e.get('value') for e in emails])
-    
+
     # Filter data
     contacts = client.get('contacts', if_modified_since='2014-07-10')
-    
+
     # Paginate
     contacts = client.get('contacts', page=2, per_page=25)
-    
+
     # Sorting and Ordering
     contacts = client.get('contacts', sort_by='modified_at', order='asc')
-    
+
 
 Create new resources:
 
@@ -86,7 +86,7 @@ Update existing resources:
     # To do a partial update
     update = {'background': 'CEO of OnePageCRM'}
     contact = client.patch('contacts', contact_id, update)['contact']
-    
+
     # To attach a note to a deal
     client.patch('notes', note_id, {'linked_deal_id': deal_id'})
 
