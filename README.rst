@@ -9,7 +9,7 @@ Installation
 
 ::
 
-    pip install -e git+https://github.com/onepagecrm/python_client.git@master#egg=python_client-master
+    pip install onepagecrm
 
 Usage
 =====
