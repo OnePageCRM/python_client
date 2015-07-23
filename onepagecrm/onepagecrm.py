@@ -109,6 +109,7 @@ class OnePageCRMAPI(object):
         return {'X-OnePageCRM-UID': self.user_id,
                 'X-OnePageCRM-TS': '%0.f' % (timestamp),
                 'X-OnePageCRM-Auth': str(signature),
+                'X-OnePageCRM-Source': 'python_client',
                 'Content-Type': 'application/json',
                 'accept': 'application/json'}
 
