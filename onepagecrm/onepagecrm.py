@@ -7,19 +7,14 @@ class.\
 '''
 
 import sys
-from hashlib import sha256
-from hashlib import sha1
 from time import time
-import hmac
-from base64 import b64decode
 import requests
+from requests.auth import HTTPBasicAuth
 from collections import OrderedDict
 from requests.utils import quote
 
-
 import re
 IDENTIFIER_REGEX = re.compile('^[a-z_][a-z0-9_]+$', re.I)
-
 
 if sys.version_info.major > 2:
     iteritems = dict.items
@@ -42,11 +37,10 @@ except ImportError:
 class OnePageCRMAPI(object):
     '''\
     Wrapper to allow requests to be made in a simple and structured manner.
-    Login with a username and password or use your UserId and API key and then
-    you will be authenticated for any request.
+    Use your UserId and API key and then you will be authenticated for any request.
     '''
 
-    DEFAULT_BASE_URL = 'https://app.onepagecrm.com/api/v3/'
+    BASE_URL = 'https://app.onepagecrm.com/api/v3/'
     DEFAULT_RESPONSE_TYPE = 'dict'
 
     def __init__(self,
@@ -56,11 +50,9 @@ class OnePageCRMAPI(object):
                  response_type=None):
         '''\
         Initializes the OnePageAPI object and authenticates
-        with the OnePageCRM API.
-
-        You can get a list of contacts with the get_contacts method.\
+        with the OnePageCRM API.\
         '''
-        self.base_url = self.DEFAULT_BASE_URL
+        self.base_url = self.BASE_URL
         self.response_type = self.DEFAULT_RESPONSE_TYPE
         if base_url:
             self.base_url = str(base_url)
@@ -68,68 +60,25 @@ class OnePageCRMAPI(object):
             self.response_type = str(response_type)
         if self.base_url[-1] == '/':
             self.base_url = self.base_url[:-1]
-        self.user_id = str(user_id) if user_id else ''
-        self.api_key = str(api_key) if api_key else ''
-        self.sales = {}
+        self.user_id = user_id
+        self.api_key = api_key
         self.lead_sources = {}
         self.statuses = {}
         self.team_stream = {}
         self.contact_counts = {}
-        self.users = {}
-        self.user = {}
+        self.tags = {}
         if self.user_id and self.api_key:
             self.request('GET', 'bootstrap')
-
-    @classmethod
-    def login(cls, user_name=None, password=None,
-              base_url=None, response_type=None):
-        '''\
-        Login to OnePageCRM API using username and password
-
-        :returns: OnePageCRMAPI object
-        :raises: RequestError\
-        '''
-        if user_name and password:
-            temp = cls(base_url=base_url)
-            body = {'login': user_name, 'password': password}
-            response = temp.request('POST', 'login', resource=body)
-            client = cls(response['user_id'], response['auth_key'],
-                         base_url, response_type)
-            client.user = response
-            return client
-        else:
-            raise RuntimeError('Need user name and password to make client')
 
     def headers(self, method, url, request_body=None):
         '''\
         Build necessary headers for communicating with OnePageCRM\
         '''
-        timestamp = time()
-        signature = self.signature(timestamp, method, url, request_body)
+
         return {'X-OnePageCRM-UID': self.user_id,
-                'X-OnePageCRM-TS': '%0.f' % (timestamp),
-                'X-OnePageCRM-Auth': str(signature),
                 'X-OnePageCRM-Source': 'python_client',
                 'Content-Type': 'application/json',
                 'accept': 'application/json'}
-
-    def signature(self, timestamp, method,
-                  request_url, request_body=None):
-        '''\
-        Creates the signature needed for the Headers\
-        '''
-        decoded_api_key = b64decode(self.api_key)
-        request_url_hash = sha1(request_url.encode('utf-8')).hexdigest()
-        signature_message = "%s.%0.f.%s.%s" % (self.user_id,
-                                               timestamp,
-                                               method.upper(),
-                                               request_url_hash)
-        if request_body:
-            request_body_hash = sha1(request_body.encode('utf-8')).hexdigest()
-            signature_message += ('.' + request_body_hash)
-        return hmac.new(decoded_api_key,
-                        signature_message.encode('utf-8'),
-                        sha256).hexdigest()
 
     def url(self, resource_name, resource_id=None, sub_resource=None,
             sub_resource_id=None, **kwargs):
@@ -168,7 +117,7 @@ class OnePageCRMAPI(object):
                 body = {}
             body = json.dumps(body)
         headers = self.headers(method, url, body)
-        response = requests.request(method, url, headers=headers, data=body)
+        response = requests.request(method, url, headers=headers, auth=HTTPBasicAuth(self.user_id, self.api_key), data=body)
         return self._handle_response(response)
 
     def _handle_response(self, response):
@@ -214,7 +163,7 @@ class OnePageCRMAPI(object):
         '''
         d = {}
         keys = ('sales', 'lead_sources', 'statuses', 'team_stream',
-                'contacts_count', 'users', 'user')
+                'contacts_count', 'tags')
         for key in keys:
             try:
                 d[key] = data[key]
@@ -230,10 +179,8 @@ class OnePageCRMAPI(object):
             self.team_stream = d['team_stream']
         if d['contacts_count']:
             self.contact_counts = d['contacts_count']
-        if d['users']:
-            self.users = d['users']
-        if d['user']:
-            self.user = d['user']
+        if d['tags']:
+            self.tags = d['tags']
 
     def get(self, resource_name, resource_id=None,
             sub_resource=None, sub_resource_id=None, **kwargs):

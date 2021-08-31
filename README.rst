@@ -19,13 +19,7 @@ The first thing to do is to set up your client
 .. code-block:: python
 
     from onepagecrm import OnePageCRMAPI, RequestError, UnknownError
-    client = OnePageCRMAPI.login(username, password)
-
-    # If you don't want to store the username and password. After you have a
-    # working client you can do the following
-    user_id = client.user_id
-    api_key = client.api_key
-    # Save these for later then to create a client
+    # Replace the user_id and api_key with your values
     client = OnePageCRMAPI(user_id, api_key)
 
 Once you have your client set up you can start making requests.
