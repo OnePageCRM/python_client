@@ -194,7 +194,7 @@ class OnePageCRMAPI(object):
         >>> contact = client.get('contacts', contact_id)['contact']
         >>> notes = client.get('contacts', contact_id, 'notes')
         >>> # Filtering
-        >>> contacts = client.get('contacts', if_modified_since='2014-06-20')
+        >>> contacts = client.get('contacts', modified_since='2014-06-20')
         >>> contacts = client.get('contacts', starred=True)
 
         :returns: dict, ResponseDict
@@ -209,8 +209,7 @@ class OnePageCRMAPI(object):
 
         Examples:
         >>> client = OnePageCRMAPI(user_id, api_key)
-        >>> client.post('contacts', {'company_name' = 'OnePageCRM'})['contact']
-        >>> contact = _
+        >>> contact = client.post('contacts', {'company_name': 'OnePageCRM'})['contact']
         >>> contact_id = contact['id']
         >>> client.post('notes', {'text': 'Met with him at the expo',
                                   'contact_id': contact_id})
@@ -229,8 +228,6 @@ class OnePageCRMAPI(object):
         >>> contacts = client.get('contacts')['contacts']
         >>> contact_id = contacts[0]['contact']['id']
         >>> contact = client.get('contacts', contact_id)['contact']
-        >>> contact['company_name'] = 'Big Company Inc.'
-        >>> client.put('contacts', contact_id, contact)
         >>> # Partial Updates
         >>> client.put('contacts', contact_id, {'company_name': 'Acme Inc.'},
                        partial=True)
@@ -267,12 +264,12 @@ class OnePageCRMAPI(object):
 
         Examples:
         >>> client = OnePageCRMAPI(user_id, api_key)
-        >>> contacts = client.get('contacts').contacts
+        >>> contacts = client.get('contacts')['contacts']
         >>> contact_id = contacts[0]['contact']['id']
-        >>> contact = client.get('contacts', contact_id).contact
+        >>> contact = client.get('contacts', contact_id)['contact']
         >>> notes = client.get('contacts', contact_id, 'notes')
         >>> # Filtering
-        >>> contacts = client.get('contacts', if_modified_since='2014-06-20')
+        >>> contacts = client.get('contacts', modified_since='2014-06-20')
         >>> contacts = client.get('contacts', starred=True)
 
         :returns: dict, ResponseDict

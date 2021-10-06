@@ -38,7 +38,7 @@ Getting data:
             email_addresses.extend([e.get('value') for e in emails])
 
     # Filter data
-    contacts = client.get('contacts', if_modified_since='2014-07-10')
+    contacts = client.get('contacts', modified_since='2014-07-10')
 
     # Paginate
     contacts = client.get('contacts', page=2, per_page=25)
@@ -82,7 +82,7 @@ Update existing resources:
     contact = client.patch('contacts', contact_id, update)['contact']
 
     # To attach a note to a deal
-    client.patch('notes', note_id, {'linked_deal_id': deal_id'})
+    client.patch('notes', note_id, {'linked_deal_id': deal_id})
 
 Delete resources you no longer need:
 
