@@ -19,7 +19,7 @@ def read(*names, **kwargs):
 
 setup(
     name="onepagecrm",
-    version="0.1.1",
+    version="0.2.0",
     license="MIT",
     description="Connect and interface with the OnePageCRM REST API",
     author="Ruairi Fahy",
