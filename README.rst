@@ -19,13 +19,7 @@ The first thing to do is to set up your client
 .. code-block:: python
 
     from onepagecrm import OnePageCRMAPI, RequestError, UnknownError
-    client = OnePageCRMAPI.login(username, password)
-
-    # If you don't want to store the username and password. After you have a
-    # working client you can do the following
-    user_id = client.user_id
-    api_key = client.api_key
-    # Save these for later then to create a client
+    # Replace the user_id and api_key with your values
     client = OnePageCRMAPI(user_id, api_key)
 
 Once you have your client set up you can start making requests.
@@ -44,7 +38,7 @@ Getting data:
             email_addresses.extend([e.get('value') for e in emails])
 
     # Filter data
-    contacts = client.get('contacts', if_modified_since='2014-07-10')
+    contacts = client.get('contacts', modified_since='2014-07-10')
 
     # Paginate
     contacts = client.get('contacts', page=2, per_page=25)
@@ -88,7 +82,7 @@ Update existing resources:
     contact = client.patch('contacts', contact_id, update)['contact']
 
     # To attach a note to a deal
-    client.patch('notes', note_id, {'linked_deal_id': deal_id'})
+    client.patch('notes', note_id, {'linked_deal_id': deal_id})
 
 Delete resources you no longer need:
 
